@@ -1,7 +1,7 @@
 import asyncio
 from typing import Optional, Dict, Any, List
 import httpx
-from .models import Ticket, TicketDetail, TicketStats
+from .models import Ticket, TicketDetail, TicketStats, TicketStatus, TicketPriority
 
 
 class DummyJSONService:
@@ -25,8 +25,8 @@ class DummyJSONService:
         
         return self._users_cache
     
-    def _calculate_priority(self, ticket_id: int) -> str:
-        priority_map = {0: "low", 1: "medium", 2: "high"}
+    def _calculate_priority(self, ticket_id: int) -> TicketPriority:
+        priority_map = {0: TicketPriority.LOW, 1: TicketPriority.MEDIUM, 2: TicketPriority.HIGH}
         return priority_map[ticket_id % 3]
     
     async def _transform_ticket(self, todo_data: dict, users: Dict[int, str]) -> Ticket:
@@ -35,7 +35,7 @@ class DummyJSONService:
         return Ticket(
             id=todo_data["id"],
             title=todo_data["todo"],
-            status="closed" if todo_data["completed"] else "open",
+            status=TicketStatus.CLOSED if todo_data["completed"] else TicketStatus.OPEN,
             priority=self._calculate_priority(todo_data["id"]),
             assignee=assignee,
             description=todo_data["todo"][:100] if len(todo_data["todo"]) > 100 else todo_data["todo"]
@@ -45,8 +45,8 @@ class DummyJSONService:
         self, 
         skip: int = 0, 
         limit: int = 30,
-        status: Optional[str] = None,
-        priority: Optional[str] = None,
+        status: Optional[TicketStatus] = None,
+        priority: Optional[TicketPriority] = None,
         search: Optional[str] = None
     ) -> tuple[List[Ticket], int]:
         response = await self.client.get(f"{self.BASE_URL}/todos")
@@ -96,14 +96,14 @@ class DummyJSONService:
         tickets, _ = await self.get_tickets(limit=1000)  # Get all tickets
         
         total_tickets = len(tickets)
-        open_tickets = sum(1 for t in tickets if t.status == "open")
+        open_tickets = sum(1 for t in tickets if t.status == TicketStatus.OPEN)
         closed_tickets = total_tickets - open_tickets
         
-        priority_counts = {"low": 0, "medium": 0, "high": 0}
+        priority_counts = {TicketPriority.LOW.value: 0, TicketPriority.MEDIUM.value: 0, TicketPriority.HIGH.value: 0}
         assignee_counts = {}
         
         for ticket in tickets:
-            priority_counts[ticket.priority] += 1
+            priority_counts[ticket.priority.value] += 1
             assignee_counts[ticket.assignee] = assignee_counts.get(ticket.assignee, 0) + 1
         
         return TicketStats(
