@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock, patch
 from src.tickethub.main import app
-from src.tickethub.models import Ticket, TicketDetail, TicketStats
+from src.tickethub.models import Ticket, TicketDetail, TicketStats, TicketStatus, TicketPriority
 
 
 @pytest.fixture
@@ -28,13 +28,13 @@ def test_root_redirect(client):
     assert response.headers["location"] == "/docs"
 
 
-@patch('src.tickethub.main.get_service')
+@patch('src.tickethub.handlers.get_service')
 def test_get_tickets(mock_get_service, client):
     mock_service = AsyncMock()
     mock_service.get_tickets.return_value = (
         [
-            Ticket(id=1, title="Test 1", status="open", priority="high", assignee="user1"),
-            Ticket(id=2, title="Test 2", status="closed", priority="low", assignee="user2")
+            Ticket(id=1, title="Test 1", status=TicketStatus.OPEN, priority=TicketPriority.HIGH, assignee="user1"),
+            Ticket(id=2, title="Test 2", status=TicketStatus.CLOSED, priority=TicketPriority.LOW, assignee="user2")
         ],
         2
     )
@@ -51,11 +51,11 @@ def test_get_tickets(mock_get_service, client):
     assert data["has_next"] is False
 
 
-@patch('src.tickethub.main.get_service')
+@patch('src.tickethub.handlers.get_service')
 def test_get_tickets_with_filters(mock_get_service, client):
     mock_service = AsyncMock()
     mock_service.get_tickets.return_value = (
-        [Ticket(id=1, title="Open ticket", status="open", priority="high", assignee="user1")],
+        [Ticket(id=1, title="Open ticket", status=TicketStatus.OPEN, priority=TicketPriority.HIGH, assignee="user1")],
         1
     )
     mock_get_service.return_value = mock_service
@@ -64,15 +64,15 @@ def test_get_tickets_with_filters(mock_get_service, client):
     assert response.status_code == 200
     
     mock_service.get_tickets.assert_called_once_with(
-        skip=0, limit=10, status="open", priority="high"
+        skip=0, limit=10, status=TicketStatus.OPEN, priority=TicketPriority.HIGH
     )
 
 
-@patch('src.tickethub.main.get_service')
+@patch('src.tickethub.handlers.get_service')
 def test_search_tickets(mock_get_service, client):
     mock_service = AsyncMock()
     mock_service.get_tickets.return_value = (
-        [Ticket(id=1, title="Important task", status="open", priority="high", assignee="user1")],
+        [Ticket(id=1, title="Important task", status=TicketStatus.OPEN, priority=TicketPriority.HIGH, assignee="user1")],
         1
     )
     mock_get_service.return_value = mock_service
@@ -85,14 +85,14 @@ def test_search_tickets(mock_get_service, client):
     )
 
 
-@patch('src.tickethub.main.get_service')
+@patch('src.tickethub.handlers.get_service')
 def test_get_ticket_by_id(mock_get_service, client):
     mock_service = AsyncMock()
     mock_service.get_ticket_by_id.return_value = TicketDetail(
         id=1,
         title="Test ticket",
-        status="open", 
-        priority="high",
+        status=TicketStatus.OPEN, 
+        priority=TicketPriority.HIGH,
         assignee="user1",
         raw_data={"id": 1, "todo": "Test", "completed": False, "userId": 1}
     )
@@ -107,7 +107,7 @@ def test_get_ticket_by_id(mock_get_service, client):
     assert "raw_data" in data
 
 
-@patch('src.tickethub.main.get_service')
+@patch('src.tickethub.handlers.get_service')
 def test_get_ticket_not_found(mock_get_service, client):
     mock_service = AsyncMock()
     mock_service.get_ticket_by_id.return_value = None
@@ -118,7 +118,7 @@ def test_get_ticket_not_found(mock_get_service, client):
     assert response.json()["detail"] == "Ticket not found"
 
 
-@patch('src.tickethub.main.get_service')
+@patch('src.tickethub.handlers.get_service')
 def test_get_stats(mock_get_service, client):
     mock_service = AsyncMock()
     mock_service.get_ticket_stats.return_value = TicketStats(

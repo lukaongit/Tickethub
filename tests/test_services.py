@@ -2,6 +2,7 @@ import pytest
 import httpx
 from unittest.mock import AsyncMock, patch
 from src.tickethub.services import DummyJSONService
+from src.tickethub.models import TicketStatus, TicketPriority
 
 
 @pytest.fixture
@@ -15,9 +16,9 @@ async def service():
 async def test_calculate_priority():
     service = DummyJSONService()
     
-    assert service._calculate_priority(1) == "medium"  # 1 % 3 = 1
-    assert service._calculate_priority(2) == "high"    # 2 % 3 = 2  
-    assert service._calculate_priority(3) == "low"     # 3 % 3 = 0
+    assert service._calculate_priority(1) == TicketPriority.MEDIUM  # 1 % 3 = 1
+    assert service._calculate_priority(2) == TicketPriority.HIGH    # 2 % 3 = 2  
+    assert service._calculate_priority(3) == TicketPriority.LOW     # 3 % 3 = 0
 
 
 @pytest.mark.asyncio
@@ -61,8 +62,8 @@ async def test_transform_ticket():
     
     assert ticket.id == 1
     assert ticket.title == "Do something important"
-    assert ticket.status == "open"
-    assert ticket.priority == "medium"  # 1 % 3 = 1
+    assert ticket.status == TicketStatus.OPEN
+    assert ticket.priority == TicketPriority.MEDIUM  # 1 % 3 = 1
     assert ticket.assignee == "testuser"
 
 
@@ -80,8 +81,8 @@ async def test_transform_ticket_completed():
     
     ticket = await service._transform_ticket(todo_data, users)
     
-    assert ticket.status == "closed"
-    assert ticket.priority == "high"  # 2 % 3 = 2
+    assert ticket.status == TicketStatus.CLOSED
+    assert ticket.priority == TicketPriority.HIGH  # 2 % 3 = 2
 
 
 @pytest.mark.asyncio
@@ -120,9 +121,9 @@ async def test_get_tickets_filtering(service):
         mock_get.side_effect = [mock_todos_response, mock_users_response]
         
         # Test status filtering
-        tickets, total = await service.get_tickets(status="open")
+        tickets, total = await service.get_tickets(status=TicketStatus.OPEN)
         assert len(tickets) == 2
-        assert all(t.status == "open" for t in tickets)
+        assert all(t.status == TicketStatus.OPEN for t in tickets)
         
         # Reset mock
         mock_get.side_effect = [mock_todos_response, mock_users_response]
