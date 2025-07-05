@@ -176,6 +176,7 @@ make clean      # očisti cache
 
 🏗️ Struktura projekta
 
+
 tickethub/
 ├── src/
 │   └── tickethub/
@@ -196,4 +197,5 @@ tickethub/
 ├── pytest.ini
 ├── pyproject.toml
 └── README.md
+
 
