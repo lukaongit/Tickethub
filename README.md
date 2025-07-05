@@ -181,9 +181,9 @@ make clean      # očisti cache
 tickethub/  
 ├── src/  
 │   └── tickethub/  
-│       ├── main.py           # FastAPI app
-│       ├── models.py         # Pydantic modeli
-│       └── services.py       # HTTP klijent + business logic
+│       ├── main.py           # FastAPI app      
+│       ├── models.py         # Pydantic modeli      
+│       └── services.py       # HTTP klijent + business logic      
 ├── tests/  
 │   ├── test_main.py  
 │   ├── test_models.py  
