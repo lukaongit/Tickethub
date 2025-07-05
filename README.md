@@ -6,7 +6,12 @@
 [![Coverage](https://img.shields.io/codecov/c/github/your-org/tickethub/main)]()
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)]()
 
-Middleware REST servis za objedinjeno upravljanje support ticketima iz različitih izvora.
+TicketHub
+
+TicketHub je middleware REST servis koji prikuplja i izlaže support tickete iz vanjskih izvora. Izgrađen s FastAPI-jem, pruža moderan, asinkron API za upravljanje ticketima s automatskom OpenAPI dokumentacijom. Značajke
+
+
+
 
 ---
 
@@ -33,14 +38,21 @@ Middleware REST servis za objedinjeno upravljanje support ticketima iz različit
 
 ## 🎫 Značajke
 
-- **Upravljanje ticketima**: dohvaćanje, filtriranje & pretraživanje iz vanjskih API-ja  
-- **Napredno filtriranje**: prema statusu (`open`/`closed`), prioritetu (`low`/`medium`/`high`)  
-- **Pretraživanje**: po naslovu ili punom tekstu  
-- **Statistike**: agregirani podaci o broju i statusima ticketa  
-- **Visoke performanse**: async/await + `httpx`  
-- **OpenAPI & Swagger**: interaktivna dokumentacija out-of-the-box  
-- **Docker & Redis**: spremno za kontejnerizaciju i caching  
-- **CI/CD**: automatsko lintanje, formatiranje i testiranje  
+🎫 Upravljanje ticketima: Dohvaćanje, filtriranje i pretraživanje ticketa iz vanjskih izvora
+
+🔍 Napredno filtriranje: Filtriranje po statusu, prioritetu i pretraživanje po naslovu
+
+📊 Statistike: Agregirane statistike ticketa
+
+🚀 Visoke performanse: Async/await s httpx-om za optimalne performanse
+
+📝 Automatska dokumentacija: Interaktivna OpenAPI/Swagger dokumentacija
+
+🐳 Docker spreman: Potpuna Docker Compose konfiguracija s Redisom
+
+✅ Dobro testiran: Opsežni jedinični i integracijski testovi
+
+🔧 Developer-friendly: Potpuna razvojna konfiguracija s lintingom, formatiranjem i CI/CD-om
 
 ---
 
