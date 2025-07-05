@@ -177,16 +177,17 @@ make clean      # očisti cache
 🏗️ Struktura projekta
 
 tickethub/
-├── src/tickethub/
-│   ├── main.py         # FastAPI app
-│   ├── models.py       # Pydantic modeli
-│   └── services.py     # HTTP klijent + business logic
+├── src/
+│   └── tickethub/
+│       ├── main.py         # FastAPI app
+│       ├── models.py       # Pydantic modeli
+│       └── services.py     # HTTP klijent + business logic
 ├── tests/
 │   ├── test_main.py
 │   ├── test_models.py
 │   └── test_services.py
-├── ci/                 # CI/CD (GitHub Actions)
-│   └── workflow.yml
+├── ci/
+│   └── workflow.yml         # CI/CD (GitHub Actions)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── Makefile
@@ -195,3 +196,4 @@ tickethub/
 ├── pytest.ini
 ├── pyproject.toml
 └── README.md
+
